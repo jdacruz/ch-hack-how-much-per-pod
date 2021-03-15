@@ -20,6 +20,8 @@ public class CostWindow {
   private JRadioButton radioButtonHourly;
   private JRadioButton radioButtonDaily;
   private JRadioButton radioButtonMonthly;
+  private JTextField clusterId;
+  private JLabel clusterIdLabel;
   private Project project;
   private Granularity selectedGranularity = Granularity.HOURLY;
 
@@ -65,5 +67,9 @@ public class CostWindow {
     }
 
     return result;
+  }
+
+  private void createUIComponents() {
+    // TODO: place custom component creation code here
   }
 }
