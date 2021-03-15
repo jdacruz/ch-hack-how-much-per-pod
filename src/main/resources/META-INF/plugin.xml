@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>com.github.jdacruz.chhackhowmuchperpod</id>
+    <id>com.cloudhealth.hackaton.chhackhowmuchperpod</id>
     <name>ch-hack-how-much-per-pod</name>
     <vendor>jdacruz</vendor>
 
@@ -8,12 +8,7 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.jdacruz.chhackhowmuchperpod.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.jdacruz.chhackhowmuchperpod.services.MyProjectService"/>
+        <toolWindow id="Cost Estimation" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+          factoryClass="com.cloudhealth.hackaton.WindowFactory"/>
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.jdacruz.chhackhowmuchperpod.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
 </idea-plugin>
