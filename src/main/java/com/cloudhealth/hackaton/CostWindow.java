@@ -68,8 +68,4 @@ public class CostWindow {
 
     return result;
   }
-
-  private void createUIComponents() {
-    // TODO: place custom component creation code here
-  }
 }
