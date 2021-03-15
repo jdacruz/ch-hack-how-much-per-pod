@@ -35,13 +35,33 @@ public class CostWindow {
 
   public void calculateCost() {
     if (validateInputs()) {
-      calculatedCost.setText(Double.toString(Math.random()));
-    } else {
+      Double cpu = 1.0;
+      int replicas = 100;
+      String cluster = "us1-prod";
+      Double totalDesiredCpu = getTotalDesiredCpu(cpu, replicas);
+      Double currentClusterCost = getCurrentCostOfCluster(cluster);
+      Double currentAvailableCpuOnCluster = getCurrentAvailableCpuOfCluster(cluster);
+      Double costPerCpu = currentClusterCost/currentAvailableCpuOnCluster;
+      Double costOfDesiredCpu = costPerCpu * totalDesiredCpu;
+
+      calculatedCost.setText(Double.toString(costOfDesiredCpu));    } else {
       JOptionPane.showMessageDialog(windowContent,
           "ERROR: Validation failed.",
           "ERROR",
           JOptionPane.ERROR_MESSAGE);
     }
+  }
+
+  private Double getTotalDesiredCpu(Double cpuPerPod, int totalReplicas) {
+    return cpuPerPod * totalReplicas;
+  }
+
+  private Double getCurrentCostOfCluster(String cluster) {
+    return 170000.0;
+  }
+
+  private Double getCurrentAvailableCpuOfCluster(String cluster) {
+    return 50000.0;
   }
 
   public JPanel getContent() {
