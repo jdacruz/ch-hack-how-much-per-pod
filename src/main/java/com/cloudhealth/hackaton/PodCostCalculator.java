@@ -27,11 +27,11 @@ public class PodCostCalculator {
      * @param cpuMillicores cpu millicore size of the pod
      * @return The cost per pod.
      */
-    public Double calculateHowMuchPerPod(String cluster, Granularity granularity, int replicas, int cpuMillicores) {
+    public Double calculateHowMuchPerPod(String cluster, int replicas, int cpuMillicores) {
 
-        int totalClusterCpuMillicores = queryTotalCpuInCluster(cluster, granularity);
+        int totalClusterCpuMillicores = queryTotalCpuInCluster(cluster);
 
-        Double totalClusterCost = queryTotalClusterCost(cluster, granularity);
+        Double totalClusterCost = queryTotalClusterCost();
 
         Double costPerMillicore = totalClusterCost/totalClusterCpuMillicores;
 
@@ -40,17 +40,13 @@ public class PodCostCalculator {
         return costPerMillicore*ourTotalServiceCpuRequirements;
     }
 
-    private Double queryTotalClusterCost(String cluster, Granularity granularity) {
+    private Double queryTotalClusterCost() {
         String API_URL_TOTAL_AVAILABLE_CPU_IN_CLUSTER = "https://chapi.cloudhealthtech.com/olap_reports/containers/cost_history";
 
-        String position = "1";
-        if (granularity == Granularity.MONTHLY) {
-            position = "2";
-        }
         WebResource webResource = client.resource(API_URL_TOTAL_AVAILABLE_CPU_IN_CLUSTER)
-            .queryParam("interval", granularity.name().toLowerCase())
+            .queryParam("interval", "monthly")
             .queryParam("filters[]", "Groupset-5841155525403:select:5841155596072")
-            .queryParam("filters[]", format("time:select:-%s", position));
+            .queryParam("filters[]", "time:select:-2");
 
         ClientResponse response = webResource
                 .accept("application/json")
@@ -67,18 +63,14 @@ public class PodCostCalculator {
         return Double.valueOf(value.toString());
     }
 
-    private int queryTotalCpuInCluster(String cluster, Granularity granularity) {
+    private int queryTotalCpuInCluster(String cluster) {
         String API_URL_TOTAL_AVAILABLE_CPU_IN_CLUSTER = "https://chapi.cloudhealthtech.com/olap_reports/containers/k8s_resources";
 
-        String position = "1";
-        if (granularity == Granularity.MONTHLY) {
-            position = "2";
-        }
-        WebResource webResource = client.resource(format(API_URL_TOTAL_AVAILABLE_CPU_IN_CLUSTER, cluster, granularity))
-                .queryParam("interval", granularity.name().toLowerCase())
-                .queryParam("measures[]", "avail_cpus")
+        WebResource webResource = client.resource(API_URL_TOTAL_AVAILABLE_CPU_IN_CLUSTER)
+                .queryParam("interval", "monthly")
+                .queryParam("measures[]", "avail_cpus_normalized")
                 .queryParam("filters[]", format("ContainerCluster:select:%s", cluster))
-                .queryParam("filters[]", format("time:select:-%s", position));
+                .queryParam("filters[]", "time:select:-2");
 
         ClientResponse response = webResource
                 .accept("application/json")

@@ -1,5 +1,7 @@
 package com.cloudhealth.hackaton;
 
+import static java.lang.String.format;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,8 +34,14 @@ public class CostWindow {
   public void calculateCost() {
     if (validateInputs()) {
       PodCostCalculator calculator = new PodCostCalculator(apiKey.getText());
-      Double money = calculator.calculateHowMuchPerPod(clusterId.getText(), selectedGranularity, Integer.parseInt(replicas.getText()), Integer.parseInt(cpu.getText()));
-      calculatedCost.setText(money.toString());
+      Double monthlyCost = calculator.calculateHowMuchPerPod(clusterId.getText(), Integer.parseInt(replicas.getText()), Integer.parseInt(cpu.getText())/1000);
+      Double returnCost = monthlyCost;
+      if (selectedGranularity == Granularity.DAILY) {
+        returnCost = monthlyCost/30;
+      } else if (selectedGranularity == Granularity.HOURLY) {
+        returnCost = monthlyCost/ (30*24);
+      }
+      calculatedCost.setText(format("%.2f", returnCost));
     } else {
       JOptionPane.showMessageDialog(windowContent,
           "ERROR: Validation failed.",
