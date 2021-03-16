@@ -34,7 +34,7 @@ public class CostWindow {
   public void calculateCost() {
     if (validateInputs()) {
       PodCostCalculator calculator = new PodCostCalculator(apiKey.getText());
-      Double monthlyCost = calculator.calculateHowMuchPerPod(clusterId.getText(), Integer.parseInt(replicas.getText()), Integer.parseInt(cpu.getText())/1000);
+      Double monthlyCost = calculator.calculateHowMuchPerPod(clusterId.getText(), Integer.parseInt(replicas.getText()), Double.parseDouble(cpu.getText())/1000.0);
       Double returnCost = monthlyCost;
       if (selectedGranularity == Granularity.DAILY) {
         returnCost = monthlyCost/30;

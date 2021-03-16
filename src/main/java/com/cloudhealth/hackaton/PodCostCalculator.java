@@ -27,7 +27,7 @@ public class PodCostCalculator {
      * @param cpuMillicores cpu millicore size of the pod
      * @return The cost per pod.
      */
-    public Double calculateHowMuchPerPod(String cluster, int replicas, int cpuMillicores) {
+    public Double calculateHowMuchPerPod(String cluster, int replicas, double cpuMillicores) {
 
         int totalClusterCpuMillicores = queryTotalCpuInCluster(cluster);
 
@@ -35,7 +35,7 @@ public class PodCostCalculator {
 
         Double costPerMillicore = totalClusterCost/totalClusterCpuMillicores;
 
-        int ourTotalServiceCpuRequirements = replicas * cpuMillicores;
+        double ourTotalServiceCpuRequirements = replicas * cpuMillicores;
 
         return costPerMillicore*ourTotalServiceCpuRequirements;
     }
