@@ -30,6 +30,9 @@ repositories {
 }
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.15.0")
+    implementation("com.sun.jersey:jersey-client:1.8")
+    implementation("org.javamoney:moneta:1.4.2")
+
 }
 
 // Configure gradle-intellij-plugin plugin.
