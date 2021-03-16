@@ -32,7 +32,9 @@ dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.15.0")
     implementation("com.sun.jersey:jersey-client:1.8")
     implementation("org.javamoney:moneta:1.4.2")
-
+    implementation("com.jayway.jsonpath:json-path:2.5.0") {
+        exclude("org.slf4j")
+    }
 }
 
 // Configure gradle-intellij-plugin plugin.
