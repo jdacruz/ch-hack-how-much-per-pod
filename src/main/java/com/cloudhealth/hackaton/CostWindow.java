@@ -1,7 +1,5 @@
 package com.cloudhealth.hackaton;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindow;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,11 +20,9 @@ public class CostWindow {
   private JRadioButton radioButtonMonthly;
   private JTextField clusterId;
   private JLabel clusterIdLabel;
-  private Project project;
   private Granularity selectedGranularity = Granularity.HOURLY;
 
-  public CostWindow(Project project, ToolWindow toolWindow) {
-    this.project = project;
+  public CostWindow() {
     calculateButton.addActionListener(e -> calculateCost());
     radioButtonHourly.addActionListener(e -> selectedGranularity = Granularity.HOURLY);
     radioButtonDaily.addActionListener(e -> selectedGranularity = Granularity.DAILY);
@@ -59,6 +55,9 @@ public class CostWindow {
     if (replicas.getText() == null || replicas.getText().trim().equalsIgnoreCase("") ) {
       result = false;
     }
+    if (clusterId.getText() == null || clusterId.getText().trim().equalsIgnoreCase("") ) {
+      result = false;
+    }
     try {
       Double.parseDouble(cpu.getText());
       Double.parseDouble(replicas.getText());
@@ -68,4 +67,5 @@ public class CostWindow {
 
     return result;
   }
+
 }
