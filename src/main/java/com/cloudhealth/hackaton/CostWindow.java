@@ -1,7 +1,5 @@
 package com.cloudhealth.hackaton;
 
-import org.javamoney.moneta.Money;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -34,7 +32,7 @@ public class CostWindow {
   public void calculateCost() {
     if (validateInputs()) {
       PodCostCalculator calculator = new PodCostCalculator(apiKey.getText());
-      Money money = calculator.calculateHowMuchPerPod(clusterId.getText(), selectedGranularity, Integer.parseInt(replicas.getText()), Integer.parseInt(cpu.getText()));
+      Double money = calculator.calculateHowMuchPerPod(clusterId.getText(), selectedGranularity, Integer.parseInt(replicas.getText()), Integer.parseInt(cpu.getText()));
       calculatedCost.setText(money.toString());
     } else {
       JOptionPane.showMessageDialog(windowContent,
