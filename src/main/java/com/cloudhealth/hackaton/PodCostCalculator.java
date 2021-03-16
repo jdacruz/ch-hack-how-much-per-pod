@@ -1,8 +1,11 @@
 package com.cloudhealth.hackaton;
 
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import net.minidev.json.JSONArray;
 import org.javamoney.moneta.Money;
 
 import static java.lang.String.format;
@@ -27,9 +30,9 @@ public class PodCostCalculator {
      */
     public Money calculateHowMuchPerPod(String cluster, Granularity granularity, int replicas, int cpuMillicores) {
 
-        int totalClusterCpuMillicores = calculateTotalCpuInCluster(cluster, granularity);
+        int totalClusterCpuMillicores = queryTotalCpuInCluster(cluster, granularity);
 
-        Money totalClusterCost = calculateTotalClusterCost(cluster, granularity);
+        Money totalClusterCost = queryTotalClusterCost(cluster, granularity);
 
         Money costPerMillicore = totalClusterCost.divide(totalClusterCpuMillicores);
 
@@ -38,7 +41,7 @@ public class PodCostCalculator {
         return costPerMillicore.multiply(ourTotalServiceCpuRequirements);
     }
 
-    private Money calculateTotalClusterCost(String cluster, Granularity granularity) {
+    private Money queryTotalClusterCost(String cluster, Granularity granularity) {
         // @TODO: find correct API (make cluster and granularity tokenizable)
         String API_URL_TOTAL_AVAILABLE_CPU_IN_CLUSTER = "";
 
@@ -57,22 +60,28 @@ public class PodCostCalculator {
         return Money.of(450, "USD");
     }
 
-    private int calculateTotalCpuInCluster(String cluster, Granularity granularity) {
-        // @TODO: find correct API (make cluster and granularity tokenizable)
-        String API_URL_TOTAL_AVAILABLE_CPU_IN_CLUSTER = "";
+    private int queryTotalCpuInCluster(String cluster, Granularity granularity) {
+        String API_URL_TOTAL_AVAILABLE_CPU_IN_CLUSTER = "https://chapi.cloudhealthtech.com/olap_reports/containers/k8s_resources";
 
-        WebResource webResource = client.resource(format(API_URL_TOTAL_AVAILABLE_CPU_IN_CLUSTER, cluster, granularity));
+        WebResource webResource = client.resource(format(API_URL_TOTAL_AVAILABLE_CPU_IN_CLUSTER, cluster, granularity))
+                .queryParam("interval", granularity.name().toLowerCase())
+                .queryParam("measures[]", "avail_cpus")
+                .queryParam("filters[]", format("ContainerCluster:select:%s", cluster))
+                .queryParam("filters[]", "time:select:-2");
+
         ClientResponse response = webResource
                 .accept("application/json")
-                .header("Authorization", format("Bearer: %s", apiKey))
+                .header("Authorization", format("Bearer %s", apiKey))
                 .get(ClientResponse.class);
 
         if (response.getStatus() != 200) {
             throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
         }
 
+        // @TODO: probably add some defensive error handling
         String output = response.getEntity(String.class);
-        // @TODO: parse output to find "most recent?" total by granularity requested
-        return 1000;
+        DocumentContext parsed = JsonPath.parse(output);
+        Object value = parsed.read("['data'][0]", JSONArray.class).get(0);
+        return Double.valueOf(value.toString()).intValue();
     }
 }
