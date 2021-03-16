@@ -11,9 +11,9 @@ public class WindowFactory implements ToolWindowFactory {
 
   @Override
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-    CostWindow costWindow = new CostWindow(project, toolWindow);
+    CostWindow costWindow = new CostWindow();
     ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-    Content content = contentFactory.createContent(costWindow.getContent(), "Cost Estimation", false);
+    Content content = contentFactory.createContent(costWindow.getContent(), "", false);
     toolWindow.getContentManager().addContent(content);
   }
 }
