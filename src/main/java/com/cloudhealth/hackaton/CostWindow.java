@@ -39,7 +39,7 @@ public class CostWindow {
               Double.parseDouble(cpu.getText()),
               selectedGranularity);
 
-      calculatedCost.setText(format("%.2f", costPerPod));
+      calculatedCost.setText(format("$%.2f", costPerPod));
     } else {
       JOptionPane.showMessageDialog(windowContent,
           "ERROR: Validation failed.",
