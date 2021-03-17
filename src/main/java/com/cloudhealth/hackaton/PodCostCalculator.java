@@ -19,15 +19,7 @@ public class PodCostCalculator {
         client = Client.create();
     }
 
-    /**
-     * Calculates how much a microservice pod costs.
-     * @param cluster the k8s cluster
-     * @param granularity time granularity
-     * @param replicas number of replicas of the pod
-     * @param cpuMillicores cpu millicore size of the pod
-     * @return The cost per pod.
-     */
-    public Double calculateHowMuchPerPod(String cluster, int replicas, double cpuMillicores) {
+    public Double calculateHowMuchPerPod(String cluster, int replicas, double cpu, Granularity granularity) {
 
         int totalClusterCpuMillicores = queryTotalCpuInCluster(cluster);
 
@@ -35,9 +27,18 @@ public class PodCostCalculator {
 
         Double costPerMillicore = totalClusterCost/totalClusterCpuMillicores;
 
-        double ourTotalServiceCpuRequirements = replicas * cpuMillicores;
+        double ourTotalServiceCpuRequirements = replicas * (cpu * 30) ;
 
-        return costPerMillicore*ourTotalServiceCpuRequirements;
+        double monthlyCost = costPerMillicore*ourTotalServiceCpuRequirements;
+
+        Double returnCost = monthlyCost;
+        if (granularity == Granularity.DAILY) {
+            returnCost = monthlyCost/30;
+        } else if (granularity == Granularity.HOURLY) {
+            returnCost = monthlyCost/ (30*24);
+        }
+
+        return returnCost;
     }
 
     private Double queryTotalClusterCost() {
@@ -68,7 +69,7 @@ public class PodCostCalculator {
 
         WebResource webResource = client.resource(API_URL_TOTAL_AVAILABLE_CPU_IN_CLUSTER)
                 .queryParam("interval", "monthly")
-                .queryParam("measures[]", "avail_cpus_normalized")
+                .queryParam("measures[]", "task_used_cpus_normalized")
                 .queryParam("filters[]", format("ContainerCluster:select:%s", cluster))
                 .queryParam("filters[]", "time:select:-2");
 

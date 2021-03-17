@@ -34,14 +34,12 @@ public class CostWindow {
   public void calculateCost() {
     if (validateInputs()) {
       PodCostCalculator calculator = new PodCostCalculator(apiKey.getText());
-      Double monthlyCost = calculator.calculateHowMuchPerPod(clusterId.getText(), Integer.parseInt(replicas.getText()), Double.parseDouble(cpu.getText())/1000.0);
-      Double returnCost = monthlyCost;
-      if (selectedGranularity == Granularity.DAILY) {
-        returnCost = monthlyCost/30;
-      } else if (selectedGranularity == Granularity.HOURLY) {
-        returnCost = monthlyCost/ (30*24);
-      }
-      calculatedCost.setText(format("%.2f", returnCost));
+      Double costPerPod = calculator.calculateHowMuchPerPod(clusterId.getText(),
+              Integer.parseInt(replicas.getText()),
+              Double.parseDouble(cpu.getText()),
+              selectedGranularity);
+
+      calculatedCost.setText(format("%.2f", costPerPod));
     } else {
       JOptionPane.showMessageDialog(windowContent,
           "ERROR: Validation failed.",
