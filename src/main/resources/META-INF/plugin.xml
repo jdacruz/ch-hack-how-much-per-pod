@@ -8,7 +8,7 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Cost Estimation" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+        <toolWindow id="Pod Cost Powered by CloudHealth" secondary="true" icon="AllIcons.General.Modified" anchor="right"
           factoryClass="com.cloudhealth.hackaton.WindowFactory"/>
     </extensions>
 </idea-plugin>
